@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+    <!--=============================================================================================================-->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-16</charset>
+            <pattern>%date{"yyyy-MM-dd HH:mm:ss,SSS"} %highlight(%-5level) %cyan(%logger{36}) [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="METRICSLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/eris-event-api-metrics.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/%d{yyyyMM,aux}/eris-event-api-metrics-%d{yyyyMMdd}.log.gz</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>%date{"yyyy-MM-dd HH:mm:ss.SSS"} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APPLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/eris-event-api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/%d{yyyyMM,aux}/eris-event-api-%d{yyyyMMdd}.log.gz</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>%date{"yyyy-MM-dd HH:mm:ss.SSS"} %-5level %logger{36} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--=============================================================================================================-->
+
+    <logger name="io.netty" level="INFO"/>
+
+    <logger name="METRICS" level="info" additivity="false">
+        <appender-ref ref="METRICSLOG"/>
+    </logger>
+
+    <root level="debug">
+        <!-- log to stdout, for debugging only -->
+        <!--
+        <appender-ref ref="STDOUT" />
+        -->
+        <appender-ref ref="APPLOG"/>
+    </root>
+
+</configuration>
