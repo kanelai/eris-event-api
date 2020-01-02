@@ -34,6 +34,18 @@
         </encoder>
     </appender>
 
+    <appender name="TXLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/eris-event-api-tx.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/%d{yyyyMM,aux}/eris-event-api-tx-%d{yyyyMMdd}.log.gz</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>%date{"yyyy-MM-dd HH:mm:ss.SSS"} %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!--=============================================================================================================-->
 
     <logger name="io.netty" level="INFO"/>
@@ -42,12 +54,14 @@
         <appender-ref ref="METRICSLOG"/>
     </logger>
 
+    <logger name="TX" level="info" additivity="false">
+        <appender-ref ref="TXLOG"/>
+    </logger>
+
     <root level="debug">
         <!-- log to stdout, for debugging only -->
         <appender-ref ref="STDOUT"/>
-        <!--
         <appender-ref ref="APPLOG"/>
-        -->
     </root>
 
 </configuration>

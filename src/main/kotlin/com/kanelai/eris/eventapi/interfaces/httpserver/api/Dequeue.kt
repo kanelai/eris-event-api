@@ -2,6 +2,7 @@ package com.kanelai.eris.eventapi.interfaces.httpserver.api
 
 import com.kanelai.eris.eventapi.domain.model.QueueTable
 import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.logger
+import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.txLogger
 import com.kanelai.eris.eventapi.interfaces.httpserver.dto.HttpApi
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -21,7 +22,7 @@ import kotlin.concurrent.withLock
 fun Route.dequeue() {
     route("/event-queue/dequeue") {
         post {
-            logger.info("Server dequeue API invoked")
+            logger.info { "Server dequeue API invoked" }
 
             var dequeueResponse = HttpApi.DequeueResponseDto(returnCode = "queueEmpty")
 
@@ -43,6 +44,8 @@ fun Route.dequeue() {
 
                         QueueTable.deleteWhere { QueueTable.id eq queueMessage[QueueTable.id] }
                         logger.debug { "DB queue table size: ${QueueTable.selectAll().count()}" }
+
+                        txLogger.info { "[SUB] DEQUEUE: id=[${queueMessage[QueueTable.id]}] data=[$dequeueResponseData]" }
                     }
                 }
             }

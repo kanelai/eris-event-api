@@ -4,6 +4,7 @@ import com.kanelai.eris.eventapi.interfaces.erisclient.api.ContractFunctionWrapp
 import com.kanelai.eris.eventapi.interfaces.erisclient.api.ErisApiClient
 import com.kanelai.eris.eventapi.interfaces.erisclient.dto.ErisApi
 import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.logger
+import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.txLogger
 import com.kanelai.eris.eventapi.interfaces.httpserver.dto.HttpApi
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -17,17 +18,20 @@ import java.time.Instant
 fun Route.enqueue() {
     route("/event-queue/{topic}/enqueue") {
         post {
-            logger.info("Server enqueue API invoked")
+            logger.info { "Server enqueue API invoked" }
 
             val topic = call.parameters["topic"]!!
             val timestamp = Instant.now()
             val payload = call.receiveText()
-            logger.debug { "Enqueue payload to blockchain event queue: $payload" }
+            logger.debug { "Enqueue to blockchain: $payload" }
 
             // enqueue
             val data = ErisApiClient.gson.toJson(ErisApi.QueueMessageDataDto(timestamp = timestamp, payload = payload))
             ContractFunctionWrapper.enqueue(topic, data)
+            logger.debug { "Enqueue to blockchain (topic: $topic): $data" }
             call.respond(HttpStatusCode.OK, HttpApi.EnqueueResponseDto("ok", HttpApi.EnqueueResponseDataDto(timestamp)))
+
+            txLogger.info { "[PUB] ENQUEUE: topic=[$topic] data=[$data]" }
         }
     }
 }

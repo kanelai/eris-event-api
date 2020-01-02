@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit
 object ApiServer {
 
     val logger = KotlinLogging.logger {}
+    val txLogger = KotlinLogging.logger("TX")
 
     fun Application.module() {
         val metricsLog = KotlinLogging.logger("METRICS")
@@ -52,7 +53,7 @@ object ApiServer {
                     .convertRatesTo(TimeUnit.SECONDS)
                     .convertDurationsTo(TimeUnit.MILLISECONDS)
                     .build()
-                    .start(10, TimeUnit.SECONDS)
+                    .start(60, TimeUnit.SECONDS)
         }
         install(StatusPages) {
             exception<Exception> { ex ->
@@ -67,7 +68,6 @@ object ApiServer {
             if (AppConfig.subscribeEnabled) {
                 count()
                 dequeue()
-                printStat()
             }
 
             get("/*") {

@@ -12,8 +12,8 @@ object ErisApi {
 
     data class ErisTransactRequestDto(val privKey: String, val address: String, val data: String, val fee: Long, val gasLimit: Long)
     data class ErisTransactResponseDto(val txHash: String, val createsContract: Int, val contractAddr: String)
-    data class ErisTransactAndHoldResponseCallData(val caller: String, val callee: String, val data: String, val value: Long, val gas: Long)
-    data class ErisTransactAndHoldResponseDto(val callData: ErisTransactAndHoldResponseCallData, val origin: String, val txId: String, val `return`: String, val exception: String)
+    data class ErisTransactAndHoldResponseCallDataDto(val caller: String, val callee: String, val data: String, val value: Long, val gas: Long)
+    data class ErisTransactAndHoldResponseDto(val callData: ErisTransactAndHoldResponseCallDataDto, val origin: String, val txId: String, val `return`: String, val exception: String)
 
     data class PeekResponseDto(val sender: String, val data: String, val blockNumber: Int)
 

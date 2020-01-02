@@ -2,6 +2,7 @@ package com.kanelai.eris.eventapi.interfaces.httpserver.api
 
 import com.kanelai.eris.eventapi.domain.model.QueueTable
 import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.logger
+import com.kanelai.eris.eventapi.interfaces.httpserver.api.ApiServer.txLogger
 import com.kanelai.eris.eventapi.interfaces.httpserver.dto.HttpApi
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -17,7 +18,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun Route.count() {
     route("/event-queue/count") {
         get {
-            logger.info("Server count API invoked")
+            logger.info { "Server count API invoked" }
 
             // read from DB
             val countResponse = transaction {
@@ -26,6 +27,8 @@ fun Route.count() {
                 val count = QueueTable.selectAll().count()
                 logger.debug { "Server count API result: $count" }
                 HttpApi.CountResponseDto("ok", HttpApi.CountResponseDataDto(count))
+
+                txLogger.info { "[SUB] COUNT: count=[$count]" }
             }
 
             call.respond(HttpStatusCode.OK, countResponse)

@@ -17,13 +17,13 @@ object ContractFunctionWrapper {
     fun getCount(topic: String): Int {
         val getCountResponseParams = ErisApiClient.invokeErisCall(contractAddress, ContractFunctionDef().getCount(Utf8String(topic)))
         val count = (getCountResponseParams[0] as Uint).value.toInt()
-        logger.debug { "Blockchain event queue count (topic: $topic): $count" }
+        logger.trace { "Blockchain event queue count (topic: $topic): $count" }
         return count
     }
 
     fun enqueue(topic: String, data: String) {
         ErisApiClient.invokeErisTransact(privateKey, contractAddress, ContractFunctionDef().enqueue(Utf8String(topic), Utf8String(data)))
-        logger.debug { "Enqueued to blockchain event queue (topic: $topic): $data" }
+        logger.trace { "Enqueued to blockchain event queue (topic: $topic): $data" }
     }
 
     fun peek(topic: String, offset: Int): ErisApi.PeekResponseDto {
@@ -32,19 +32,19 @@ object ContractFunctionWrapper {
                 peekResponseParams[0].toString(),
                 peekResponseParams[1].toString(),
                 (peekResponseParams[2] as Uint).value.toInt())
-        logger.debug { "Peek (topic: $topic): $peekResponse" }
+        logger.trace { "Peek (topic: $topic, offset: $offset): $peekResponse" }
         return peekResponse
     }
 
     fun removeFirstItems(topic: String, count: Int) {
         ErisApiClient.invokeErisTransactAndHold(privateKey, contractAddress, ContractFunctionDef().removeFirstItems(Utf8String(topic), Uint(BigInteger.valueOf(count.toLong()))))
-        logger.debug { "Removed first $count items (topic: $topic)" }
+        logger.trace { "Removed first $count items (topic: $topic)" }
     }
 
     fun getBlockNumber(): Int {
         val getBlockNumberResponseParams = ErisApiClient.invokeErisCall(contractAddress, ContractFunctionDef().getBlockNumber())
         val blockNumber = (getBlockNumberResponseParams[0] as Uint).value.toInt()
-        logger.debug { "Block number: $blockNumber" }
+        logger.trace { "Block number: $blockNumber" }
         return blockNumber
     }
 

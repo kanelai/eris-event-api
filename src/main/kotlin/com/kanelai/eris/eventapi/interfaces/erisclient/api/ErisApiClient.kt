@@ -49,14 +49,14 @@ object ErisApiClient {
         Eris "CA" cert's private key -sign-> "local_node" cert (for server-side Eris node port 1337)
         Eris "CA" cert's private key -sign-> "eris-api-client-cert-key-store" cert (for this client-side)
          */
-        logger.debug { "Using client cert in keystore ${AppConfig.keystore}" }
+        logger.info { "Using client cert in keystore ${AppConfig.keystore}" }
         val keystore = File(AppConfig.keystore)
         val keystorePassword = AppConfig.keystorePassword.toCharArray()
         val keyPassword = AppConfig.keyPassword.toCharArray()
 
         val mySslContext = if (AppConfig.trustAllServerCert) {
             // trust all server cert
-            logger.debug { "Trusting all server cert" }
+            logger.info { "Trusting all server cert" }
 
             SSLContexts
                     .custom()
@@ -65,7 +65,7 @@ object ErisApiClient {
                     .build()
         } else {
             // either verify server cert against trusted CA cert in the truststore
-            logger.debug { "Using truststore ${AppConfig.truststore} for verification of server cert" }
+            logger.info { "Using truststore ${AppConfig.truststore} for verification of server cert" }
 
             // load trust store
             val truststore = KeyStore.getInstance(KeyStore.getDefaultType())
@@ -110,6 +110,7 @@ object ErisApiClient {
     }
 
     fun invokeErisCall(contractAddress: String, contractFunction: Function): List<Type<*>> {
+        logger.trace { "invokeErisCall (address: $contractAddress, function: ${contractFunction.name}" }
         return runBlocking {
             val erisCallResponse = apiClient.post<ErisApi.ErisCallResponseDto> {
                 url(URL("${AppConfig.erisApiUrl}/calls"))
@@ -123,6 +124,7 @@ object ErisApiClient {
     }
 
     fun invokeErisTransact(privateKey: String, contractAddress: String, contractFunction: Function): String {
+        logger.trace { "invokeErisTransact (privateKey: ***, address: $contractAddress, function: ${contractFunction.name}" }
         return runBlocking {
             val erisTransactResponse = apiClient.post<ErisApi.ErisTransactResponseDto> {
                 url(URL("${AppConfig.erisApiUrl}/unsafe/txpool?hold=false"))
@@ -139,6 +141,7 @@ object ErisApiClient {
     }
 
     fun invokeErisTransactAndHold(privateKey: String, contractAddress: String, contractFunction: Function): List<Type<*>> {
+        logger.trace { "invokeErisTransactAndHold (privateKey: ***, address: $contractAddress, function: ${contractFunction.name}" }
         return runBlocking {
             val erisTransactAndHoldResponse = apiClient.post<ErisApi.ErisTransactAndHoldResponseDto> {
                 url(URL("${AppConfig.erisApiUrl}/unsafe/txpool?hold=true"))
