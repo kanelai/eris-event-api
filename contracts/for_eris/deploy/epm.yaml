@@ -1,0 +1,7 @@
+jobs:
+
+- name: eventQueue
+  job:
+    deploy:
+      contract: $solFile
+      wait: false

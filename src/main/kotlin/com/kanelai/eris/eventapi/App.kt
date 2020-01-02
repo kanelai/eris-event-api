@@ -1,17 +1,11 @@
 package com.kanelai.eris.eventapi
 
-import com.kanelai.eris.eventapi.client.BlockchainQueueChecker
-import com.kanelai.eris.eventapi.db.QueueTable
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
+import com.kanelai.eris.eventapi.application.impl.BlockchainQueueCheckerServiceImpl
+import com.kanelai.eris.eventapi.config.AppConfig
+import com.kanelai.eris.eventapi.infrastructure.persistence.exposed.DatabaseUtil
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
-import org.jetbrains.exposed.sql.SchemaUtils.withDataBaseLock
-import org.jetbrains.exposed.sql.Slf4jSqlLogger
-import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.concurrent.thread
 
 object App {
@@ -22,36 +16,19 @@ object App {
         val env = commandLineEnvironment(args)
 
         if (AppConfig.subscribeEnabled) {
+            println("Starting scheduler")
+
             // init DB
-            initDb()
+            DatabaseUtil.initDb()
 
             thread {
                 // setup scheduler to poll Eris
-                BlockchainQueueChecker.startLoop()
+                BlockchainQueueCheckerServiceImpl.startLoop()
             }
         }
 
-        embeddedServer(Netty, env).start()
-    }
-
-    private fun initDb() {
-        Class.forName(AppConfig.dbDriver);
-        val config = HikariConfig()
-        config.jdbcUrl = AppConfig.dbJdbcUrl
-        config.username = AppConfig.dbUsername
-        config.password = AppConfig.dbPassword
-
-        val ds = HikariDataSource(config)
-
-        Database.connect(ds)
-
-        transaction {
-            logger.addLogger(Slf4jSqlLogger)
-
-            withDataBaseLock {
-                createMissingTablesAndColumns(QueueTable)
-            }
-        }
+        println("Starting API server")
+        embeddedServer(Netty, env).start(wait = true)
     }
 
 }

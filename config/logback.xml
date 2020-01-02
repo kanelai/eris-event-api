@@ -44,10 +44,10 @@
 
     <root level="debug">
         <!-- log to stdout, for debugging only -->
+        <appender-ref ref="STDOUT"/>
         <!--
-        <appender-ref ref="STDOUT" />
-        -->
         <appender-ref ref="APPLOG"/>
+        -->
     </root>
 
 </configuration>

@@ -17,3 +17,5 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 config/eris-event-api.jks
+eris-event-api.tar.gz
+/contracts/build

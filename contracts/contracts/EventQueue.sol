@@ -8,7 +8,7 @@
 //
 contract EventQueue {
 
-    uint constant CAPACITY = 100;
+    uint constant CAPACITY = 1000;
 
     struct QueueItemStruct {
         address sender;
@@ -17,18 +17,18 @@ contract EventQueue {
     }
 
     struct QueueStruct {
-        QueueItemStruct[100 + 1] items;   // was [CAPACITY + 1], but the Solidity compiler that comes with Eris does not support this
+        QueueItemStruct[1000 + 1] items;   // was [CAPACITY + 1], but the Solidity compiler that comes with Eris does not support this
         uint firstIndex;
         uint lastIndex;
     }
 
     mapping(string => QueueStruct) private queue;
 
-    function isFull(string topic) public constant returns (bool) {
+    function isFull(string topic) public constant returns (bool isFull) {
         return ((queue[topic].lastIndex + 1) % queue[topic].items.length == queue[topic].firstIndex);
     }
 
-    function getCount(string topic) public constant returns (uint) {
+    function getCount(string topic) public constant returns (uint count) {
         if (queue[topic].lastIndex >= queue[topic].firstIndex) {
             return queue[topic].lastIndex - queue[topic].firstIndex;
         } else {
@@ -37,7 +37,7 @@ contract EventQueue {
         }
     }
 
-    function getCapacity(string topic) public constant returns (uint) {
+    function getCapacity(string topic) public constant returns (uint capacity) {
         return queue[topic].items.length - 1;
     }
 
@@ -86,11 +86,11 @@ contract EventQueue {
 
     // internal functions
 
-    function _firstIndex(string topic) public constant returns (uint) {
+    function _firstIndex(string topic) public constant returns (uint firstIndex) {
         return queue[topic].firstIndex;
     }
 
-    function _lastIndex(string topic) public constant returns (uint) {
+    function _lastIndex(string topic) public constant returns (uint lastIndex) {
         return queue[topic].lastIndex;
     }
 

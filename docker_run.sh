@@ -1,3 +1,11 @@
 #!/usr/bin/env bash
 
-docker run -it -p 8080:8080 --rm eris-event-api
+# The ":z" is for fixing permission denied problem in SELinux Docker image
+
+docker run \
+-it \
+--rm \
+-p 8080:8080 \
+-p 8443:8443 \
+-v `pwd`/config:/root/config:z \
+eris-event-api
