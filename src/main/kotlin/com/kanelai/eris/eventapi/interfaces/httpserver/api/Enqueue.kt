@@ -29,7 +29,9 @@ fun Route.enqueue() {
             val data = ErisApiClient.gson.toJson(ErisApi.QueueMessageDataDto(timestamp = timestamp, payload = payload))
             ContractFunctionWrapper.enqueue(topic, data)
             logger.debug { "Enqueue to blockchain (topic: $topic): $data" }
-            call.respond(HttpStatusCode.OK, HttpApi.EnqueueResponseDto("ok", HttpApi.EnqueueResponseDataDto(timestamp)))
+            val enqueueResponse = HttpApi.EnqueueResponseDto("ok", HttpApi.EnqueueResponseDataDto(timestamp))
+            logger.debug { "HTTP enqueueResponse: $enqueueResponse" }
+            call.respond(HttpStatusCode.OK, enqueueResponse)
 
             txLogger.info { "[PUB] ENQUEUE: topic=[$topic] data=[$data]" }
         }

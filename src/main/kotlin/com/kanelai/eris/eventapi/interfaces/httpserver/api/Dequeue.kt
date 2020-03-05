@@ -24,7 +24,7 @@ fun Route.dequeue() {
         post {
             logger.info { "Server dequeue API invoked" }
 
-            var dequeueResponse = HttpApi.DequeueResponseDto(returnCode = "queueEmpty")
+            var dequeueResponse = HttpApi.DequeueResponseDto("queueEmpty")
 
             // dequeue from DB
             transaction {
@@ -50,6 +50,7 @@ fun Route.dequeue() {
                 }
             }
 
+            logger.debug { "HTTP dequeueResponse: $dequeueResponse" }
             call.respond(HttpStatusCode.OK, dequeueResponse)
         }
     }

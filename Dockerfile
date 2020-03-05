@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 
-COPY ./build/libs/eris-event-api-2.0.0-capsule.jar /root/eris-event-api.jar
+COPY ./build/libs/eris-event-api.jar /root/eris-event-api.jar
 
 WORKDIR /root
 

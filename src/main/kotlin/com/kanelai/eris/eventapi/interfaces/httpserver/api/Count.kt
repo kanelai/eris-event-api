@@ -20,17 +20,20 @@ fun Route.count() {
         get {
             logger.info { "Server count API invoked" }
 
+            var countResponse = HttpApi.CountResponseDto("failed")
+
             // read from DB
-            val countResponse = transaction {
+            transaction {
                 addLogger(Slf4jSqlDebugLogger)
 
                 val count = QueueTable.selectAll().count()
                 logger.debug { "Server count API result: $count" }
-                HttpApi.CountResponseDto("ok", HttpApi.CountResponseDataDto(count))
 
+                countResponse = HttpApi.CountResponseDto("ok", HttpApi.CountResponseDataDto(count))
                 txLogger.info { "[SUB] COUNT: count=[$count]" }
             }
 
+            logger.debug { "HTTP countResponse: $countResponse" }
             call.respond(HttpStatusCode.OK, countResponse)
         }
     }
